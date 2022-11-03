@@ -1,0 +1,25 @@
+{
+  "type": "module",
+  "dependencies": {
+    "casbin": "^5.19.1",
+    "casbin-sequelize-adapter": "^2.4.0",
+    "lodash": "^4.17.21",
+    "pg": "^8.8.0",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.25.3"
+  },
+  "name": "casbin-cli-prototype",
+  "version": "0.1.0",
+  "main": "index.js",
+  "devDependencies": {
+    "jest": "^29.1.2"
+  },
+  "maxWorkers устанавливает использование одного потока ЦП, чтобы СУБД не умирала от асинхронных подключений и отключений хоста": "",
+  "scripts": {
+    "start": "node .\\src\\index.js",
+    "test": "node --experimental-vm-modules --no-warnings node_modules/jest/bin/jest.js --maxWorkers=1"
+  },
+  "author": "Tabolin A.S.",
+  "license": "ISC",
+  "description": ""
+}
