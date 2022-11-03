@@ -17,7 +17,7 @@ const cliClasses = {
   rbacHandmadeORMAccelerated: CliRbacHandmadeORMAccelerated
 }
 
-const chooseMode = async () => {
+async function chooseMode() {
   const rl = readline.createInterface({ input, output });
 
   const accessControlModes = {

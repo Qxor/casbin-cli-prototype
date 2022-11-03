@@ -2,7 +2,7 @@ import DB from "./infra/DB.js";
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 
-const auth = async () => {
+async function auth() {
   const db = new DB(true);
   const rl = readline.createInterface({ input, output });
 
