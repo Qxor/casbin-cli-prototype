@@ -32,7 +32,6 @@ list obj group={num} type={num} rep={num}
 list obj group=3 type=2 rep=10
 ```
 
-### Список объектов по группе
 ---
 ```
 list obj group={num} rep={num}
@@ -55,7 +54,6 @@ list obj group={num} rep={num}
 list obj group=2 rep=1
 ```
 
-### Подготовка данных
 ---
 ```
 prep data{num} pools={num}
