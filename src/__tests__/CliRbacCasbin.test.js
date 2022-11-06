@@ -9,6 +9,8 @@ describe("CliRbacCasbin", () => {
   const db = cli.db;
 
   beforeAll(async () => {
+    await cli.init()
+
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
 
@@ -23,7 +25,7 @@ describe("CliRbacCasbin", () => {
 
   afterAll(async () => {
     await db.close();
-    (await cli.casbinAdapter).close()
+    await cli.adapter.close()
   });
 
   test("listObjectsByType", async () => {

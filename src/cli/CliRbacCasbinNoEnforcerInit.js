@@ -1,16 +1,18 @@
 import _ from "lodash";
+import { fileURLToPath } from "url";
+import { dirname, resolve } from "path";
+import { SequelizeAdapter } from "casbin-sequelize-adapter";
 
 import CLI from "./CLI.js"
-import ORMDB from "../infra/ORMDB.js"
-import { enforce, getAllowedTypes } from "../enforcers/rbacHandmadeEnforcerORMAccelerated.js"
+import enforce from "../enforcers/rbacCasbinEnforcerNoEnforcerInit.js";
 
-class CliRbacHandmadeORMAccelerated extends CLI {
+class CliRbacCasbinNoEnforcerInit extends CLI {
   constructor(...args) {
     super(...args)
 
     this.commands = {
       prep: {
-        data2: this.prepareDataRbacHandmade,
+        data1: this.prepareDataRbacCasbin,
       },
       list: {
         obj: this.listObjects,
@@ -19,11 +21,21 @@ class CliRbacHandmadeORMAccelerated extends CLI {
   }
 
   async init() {
-    this.sequelizeAdapter = new ORMDB(this.prodMode)
+    const dbName = this.prodMode ? 'casbin' : 'casbinTest'
+    this.casbinAdapter = await SequelizeAdapter.newAdapter({
+      username: "postgres",
+      password: "password",
+      database: dbName,
+      dialect: "postgresql",
+      logging: false,
+    });
+
+    const __filename = fileURLToPath(import.meta.url);
+    this.__dirname = dirname(__filename);
   }
 
-  async prepareDataRbacHandmade({ self, pools, usermulti, objmulti }) {
-    await self.db.prepareDataRbacHandmade(pools, usermulti, objmulti);
+  async prepareDataRbacCasbin({ self, pools, usermulti, objmulti }) {
+    await self.db.prepareDataRbacCasbin(pools, usermulti, objmulti);
 
     return { result: "Done" };
   }
@@ -36,18 +48,24 @@ class CliRbacHandmadeORMAccelerated extends CLI {
       type
     )}\n---\n`;
 
+    const model = resolve(this.__dirname, "../config/rbac_model.conf");
+    const adapter = this.casbinAdapter;
+
     const durations = [];
 
     let allowed;
     for (let i = 1; i <= parseInt(rep); i++) {
       const start = performance.now();
+      
       allowed = await enforce(
-        this.sequelizeAdapter,
+        model,
+        adapter,
         this.userLogin,
         `group${group}`,
         `type${type}`,
         "read"
       );
+
       const end = performance.now();
       durations.push(end - start);
     }
@@ -72,22 +90,36 @@ class CliRbacHandmadeORMAccelerated extends CLI {
 
     const header = `Group:\t${_.capitalize(group)}\n---\n`;
 
+    const model = resolve(this.__dirname, "../config/rbac_model.conf");
+    const adapter = this.casbinAdapter;
+
     const durations = [];
 
     let allowedTypes;
     for (let i = 1; i <= parseInt(rep); i++) {
+      const allTypes = await this.db.getGroupTypes(group);
+
       const start = performance.now();
 
-      allowedTypes = await getAllowedTypes(
-        this.sequelizeAdapter,
-        this.userLogin,
-        `group${group}`,
-        "read"
+      allowedTypes = await Promise.all(
+        allTypes.map(async (type) => {
+          const allowed = await enforce(
+            model,
+            adapter,
+            this.userLogin,
+            `group${group}`,
+            type,
+            "read"
+          );
+          return allowed ? type : false;
+        })
       );
-      
+
       const end = performance.now();
       durations.push(end - start);
     }
+
+    allowedTypes = allowedTypes.filter((el) => el);
 
     if (allowedTypes.length === 0) {
       return {
@@ -95,7 +127,6 @@ class CliRbacHandmadeORMAccelerated extends CLI {
         enforceTime: _.mean(durations),
       };
     }
-
     const tables = await Promise.all(
       allowedTypes.map(async (type) => {
         return {
@@ -123,4 +154,4 @@ class CliRbacHandmadeORMAccelerated extends CLI {
   }
 }
 
-export default CliRbacHandmadeORMAccelerated;
+export default CliRbacCasbinNoEnforcerInit;

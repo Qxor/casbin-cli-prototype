@@ -1,6 +1,7 @@
 import _ from "lodash";
 
 import CLI from "./CLI.js"
+import DB from "../infra/DB.js";
 import { enforce, getAllowedTypes } from "../enforcers/rbacHandmadeEnforcerSQLAccelerated.js";
 
 
@@ -16,6 +17,10 @@ class CliRbacHandmadeSQLAccelerated extends CLI {
         obj: this.listObjects,
       },
     }
+  }
+
+  async init() {
+    this.dbAdapter = new DB(this.prodMode);
   }
 
   async prepareDataRbacHandmade({ self, pools, usermulti, objmulti }) {
@@ -38,7 +43,7 @@ class CliRbacHandmadeSQLAccelerated extends CLI {
     for (let i = 1; i <= parseInt(rep); i++) {
       const start = performance.now();
       allowed = await enforce(
-        this.db,
+        this.dbAdapter,
         this.userLogin,
         `group${group}`,
         `type${type}`,
@@ -75,7 +80,7 @@ class CliRbacHandmadeSQLAccelerated extends CLI {
       const start = performance.now();
 
       allowedTypes = await getAllowedTypes(
-        this.db,
+        this.dbAdapter,
         this.userLogin,
         `group${group}`,
         "read"

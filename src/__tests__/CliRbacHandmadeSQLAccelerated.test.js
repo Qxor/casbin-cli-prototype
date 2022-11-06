@@ -9,6 +9,8 @@ describe("CliRbacHandmadeSQLAccelerated", () => {
   const db = cli.db;
 
   beforeAll(async () => {
+    await cli.init();
+
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
 
@@ -23,6 +25,7 @@ describe("CliRbacHandmadeSQLAccelerated", () => {
 
   afterAll(async () => {
     await db.close();
+    await cli.dbAdapter.close()
   });
 
   test("listObjectsByType", async () => {

@@ -9,6 +9,8 @@ describe("CliRbacHandmadeORMAccelerated", () => {
   const db = cli.db;
 
   beforeAll(async () => {
+    await cli.init()
+
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
 

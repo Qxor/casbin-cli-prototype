@@ -14,6 +14,8 @@ class CLI {
     this.denyMessage = `Operation denied: no permission`;
   }
 
+  async init() {}
+
   parseArgs(args) {
     return args.reduce((acc, arg) => {
       const reKey = /^\w+/s;

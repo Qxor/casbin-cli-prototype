@@ -20,6 +20,24 @@ class ORMDB {
       });
     }
 
+    this.Users = this.sequelize.define(
+      "Users", {
+        Id: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+          allowNull: false,
+        },
+        Name: {
+          type: DataTypes.STRING(255),
+          allowNull: false,
+        }
+      },
+      {
+        tableName: "Users",
+        timestamps: false,
+      }
+    )
+
     this.Auth = this.sequelize.define(
       "Auth",
       {
@@ -66,6 +84,24 @@ class ORMDB {
       }
     );
 
+    this.Roles = this.sequelize.define(
+      "Roles", {
+        Id: {
+          type: DataTypes.INTEGER,
+          primaryKey: true,
+          allowNull: false,
+        },
+        Name: {
+          type: DataTypes.STRING(255),
+          allowNull: false,
+        }
+      },
+      {
+        tableName: "Roles",
+        timestamps: false,
+      }
+    )
+
     this.Permissions = this.sequelize.define(
       "Permissions",
       {
@@ -96,6 +132,20 @@ class ORMDB {
         timestamps: false,
       }
     );
+
+    this.Users.hasOne(this.Auth)
+
+    this.Users.hasMany(this.UserRoles, {
+      foreignKey: 'UserId'
+    })
+
+    this.Roles.hasMany(this.UserRoles, {
+      foreignKey: 'RoleId'
+    })
+
+    this.Roles.hasMany(this.Permissions, {
+      foreignKey: 'RoleId'
+    })
   }
 }
 

@@ -16,7 +16,9 @@ class CliRbacHandmadeORM extends CLI {
         obj: this.listObjects,
       },
     }
-    
+  }
+
+  async init() {
     this.sequelizeAdapter = new ORMDB(this.prodMode)
   }
 

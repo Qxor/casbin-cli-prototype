@@ -4,9 +4,9 @@ import { dirname, resolve } from "path";
 import { SequelizeAdapter } from "casbin-sequelize-adapter";
 
 import CLI from "./CLI.js"
-import enforce from "../enforcers/rbacCasbinEnforcer.js";
+import { newEnforcer } from "casbin";
 
-class CliCommandsRbacCasbin extends CLI {
+class CliRbacCasbin extends CLI {
   constructor(...args) {
     super(...args)
 
@@ -17,22 +17,33 @@ class CliCommandsRbacCasbin extends CLI {
       list: {
         obj: this.listObjects,
       },
+      load: {
+        p: this.load
+      }
     }
-  
-    const dbName = this.prodMode ? 'casbin' : 'casbinTest'
-    this.casbinAdapter = SequelizeAdapter.newAdapter({
-        username: "postgres",
-        password: "password",
-        database: dbName,
-        dialect: "postgresql",
-        logging: false,
-      });
+  }
 
-    this.dirname = (() => {
-      const __filename = fileURLToPath(import.meta.url);
-      const __dirname = dirname(__filename);
-      return __dirname;
-    })();
+  async init() {
+    const dbName = this.prodMode ? 'casbin' : 'casbinTest'
+    this.adapter = await SequelizeAdapter.newAdapter({
+      username: "postgres",
+      password: "password",
+      database: dbName,
+      dialect: "postgresql",
+      logging: false,
+    });
+
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    const model = resolve(__dirname, "../config/rbac_model.conf");
+
+    this.enforcer = await newEnforcer(model, this.adapter);
+  }
+
+  async load({ self }) {
+    await self.enforcer.loadPolicy()
+
+    return { result: "Policies loaded" };
   }
 
   async prepareDataRbacCasbin({ self, pools, usermulti, objmulti }) {
@@ -49,19 +60,13 @@ class CliCommandsRbacCasbin extends CLI {
       type
     )}\n---\n`;
 
-    const dirname = this.dirname;
-    const model = resolve(dirname, "../config/rbac_model.conf");
-    const adapter = await this.casbinAdapter;
-
     const durations = [];
 
-    let allowed;
+    let allowed = false;
     for (let i = 1; i <= parseInt(rep); i++) {
       const start = performance.now();
-      
-      allowed = await enforce(
-        model,
-        adapter,
+
+      allowed = await this.enforcer.enforce(
         this.userLogin,
         `group${group}`,
         `type${type}`,
@@ -71,7 +76,7 @@ class CliCommandsRbacCasbin extends CLI {
       const end = performance.now();
       durations.push(end - start);
     }
-
+    
     if (allowed) {
       const objects = await this.db.listObjectsByType(
         `Group${group}`,
@@ -92,10 +97,6 @@ class CliCommandsRbacCasbin extends CLI {
 
     const header = `Group:\t${_.capitalize(group)}\n---\n`;
 
-    const dirname = this.dirname;
-    const model = resolve(dirname, "../config/rbac_model.conf");
-    const source = await this.casbinAdapter;
-
     const durations = [];
 
     let allowedTypes;
@@ -106,9 +107,7 @@ class CliCommandsRbacCasbin extends CLI {
 
       allowedTypes = await Promise.all(
         allTypes.map(async (type) => {
-          const allowed = await enforce(
-            model,
-            source,
+          const allowed = await this.enforcer.enforce(
             this.userLogin,
             `group${group}`,
             type,
@@ -157,4 +156,4 @@ class CliCommandsRbacCasbin extends CLI {
   }
 }
 
-export default CliCommandsRbacCasbin;
+export default CliRbacCasbin;

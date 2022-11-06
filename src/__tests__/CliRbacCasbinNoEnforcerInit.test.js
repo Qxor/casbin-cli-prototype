@@ -2,10 +2,10 @@ import { fileURLToPath } from "url";
 import { dirname, resolve } from "path";
 import { open } from 'node:fs/promises';
 
-import CliRbacHandmadeORM from '../cli/CliRbacHandmadeORM.js'
+import CliRbacCasbinNoEnforcerInit from '../cli/CliRbacCasbinNoEnforcerInit.js'
 
-describe("CliRbacHandmadeORM", () => {
-  const cli = new CliRbacHandmadeORM("user950", false);
+describe("CliRbacCasbinNoEnforcerInit", () => {
+  const cli = new CliRbacCasbinNoEnforcerInit("user950", false);
   const db = cli.db;
 
   beforeAll(async () => {
@@ -20,12 +20,12 @@ describe("CliRbacHandmadeORM", () => {
     await db.client.query(query);
 
     const pools = 1
-    await db.prepareDataRbacHandmade(pools)
+    await db.prepareDataRbacCasbin(pools)
   });
 
   afterAll(async () => {
     await db.close();
-    await cli.sequelizeAdapter.sequelize.close()
+    await cli.casbinAdapter.close()
   });
 
   test("listObjectsByType", async () => {
