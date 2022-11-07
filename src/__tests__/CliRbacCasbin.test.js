@@ -33,6 +33,7 @@ describe("CliRbacCasbin", () => {
     const type = 1
     const obj = 10
 
+    await cli.load({self: cli})
     const data = await cli.listObjects({ self: cli, group, type, rep: 1 })
 
     const expectedObjects = []
@@ -49,6 +50,7 @@ describe("CliRbacCasbin", () => {
     const types = 4
     const obj = 10
 
+    await cli.load({self: cli})
     const data = await cli.listObjects({ self: cli, group, rep: 1 })
 
     const expectedObjects = []
