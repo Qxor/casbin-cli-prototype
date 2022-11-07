@@ -65,7 +65,7 @@ class CliRbacCasbin extends CLI {
     let allowed = false;
     for (let i = 1; i <= parseInt(rep); i++) {
       const start = performance.now();
-
+      //console.log(this.enforcer.model.model.get('p').get('p')) //посмотреть в объекте casbin набор политик, загруженных из БД
       allowed = await this.enforcer.enforce(
         this.userLogin,
         `group${group}`,
