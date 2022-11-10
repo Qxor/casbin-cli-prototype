@@ -31,22 +31,6 @@ class DB {
     await this.client.end();
   }
 
-  async createRoot() {
-    const queryFindLastUserId = `
-    select "Id" from public."Users"
-    order by "Id" desc
-    limit 1`;
-    const result = await this.client.query(queryFindLastUserId);
-    const user = result.rows.length > 0 && result.rows[0];
-    const id = user ? user.Id : "0";
-
-    const nextId = parseInt(id, 10) + 1;
-    const queryCreateUser = `
-      insert into public."Users" ("Id", "Name") values (${nextId}, 'Andrey');
-      insert into public."Auth" ("UserId", "Login") values (${nextId}, 'root');`;
-    await this.client.query(queryCreateUser);
-  }
-
   async authUser(inputLogin) {
     const query = `
     SELECT * FROM public."Auth"

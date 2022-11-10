@@ -25,7 +25,7 @@ async function prepareData(db, poolsCount, usersMultiplier, objectsMultiplier) {
     },
   };
 
-  //чистим таблицы, создаём таблицы с объектами, создаём учётку root
+  //чистим таблицы, создаём таблицы с объектами
   await db.dropObjectTables();
 
   const qCleanTables = `
@@ -44,7 +44,6 @@ async function prepareData(db, poolsCount, usersMultiplier, objectsMultiplier) {
     preset.groupsPerSet,
     preset.typesPerGroup
   );
-  await db.createRoot();
 
   //создаём объекты
   const objects = [];
@@ -66,19 +65,17 @@ async function prepareData(db, poolsCount, usersMultiplier, objectsMultiplier) {
   await db.client.query(qCreateObjects);
 
   //создаём пользователей
-  //id со второго, потому что root создан
-
   const totalUsers = Object.values(preset.userGroup).reduce(
     (acc, v) => acc + v,
     0
   );
   const users = [];
-  for (let i = 2; i <= totalUsers * preset.pools + 1; i++) {
+  for (let i = 1; i <= totalUsers * preset.pools + 1; i++) {
     users.push(`(${i}, 'Ivan')`);
   }
 
   const usersAuth = [];
-  for (let i = 2; i <= totalUsers * preset.pools + 1; i++) {
+  for (let i = 1; i <= totalUsers * preset.pools + 1; i++) {
     usersAuth.push(`(${i}, 'user${i - 1}')`);
   }
 

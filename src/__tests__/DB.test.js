@@ -22,30 +22,6 @@ describe("DB", () => {
   });
 
 
-  test("createRoot", async () => {
-    await db.createRoot()
-    const userRows = await db.client.query(`
-      select * from public."Users"
-      where "Id" = 1;`
-    )
-    const root = userRows.rows[0]
-    expect(root).toEqual({ Id: 1, Name: 'Andrey' })
-
-    const authRows = await db.client.query(`
-      select * from public."Auth"
-      where "UserId" = 1;`
-    )
-    const rootAuth = authRows.rows[0]
-    expect(rootAuth).toEqual({ UserId: 1, Login: 'root' })
-  });
-
-
-  test("authUser", async () => {
-    const result = await db.authUser('root')
-    expect(result).toBe(true)
-  });
-
-
   test("createObjectTables", async () => {
     const pools = 1
     const sets = 4
@@ -267,5 +243,10 @@ describe("DB", () => {
   test("getGroupTypes", async () => {
     const types = await db.getGroupTypes(`Group1`)
     expect(types).toEqual(['type1', 'type2', 'type3', 'type4'])
+  });
+
+  test("authUser", async () => {
+    const result = await db.authUser('user1')
+    expect(result).toBe(true)
   });
 });
