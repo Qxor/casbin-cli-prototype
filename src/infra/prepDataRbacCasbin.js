@@ -70,12 +70,12 @@ async function prepareData(db, poolsCount, usersMultiplier, objectsMultiplier) {
     0
   );
   const users = [];
-  for (let i = 1; i <= totalUsers * preset.pools + 1; i++) {
+  for (let i = 1; i <= totalUsers * preset.pools; i++) {
     users.push(`(${i}, 'Ivan')`);
   }
 
   const usersAuth = [];
-  for (let i = 1; i <= totalUsers * preset.pools + 1; i++) {
+  for (let i = 1; i <= totalUsers * preset.pools; i++) {
     usersAuth.push(`(${i}, 'user${i - 1}')`);
   }
 
