@@ -127,19 +127,17 @@ class DB {
       .join(" AND ");
 
     const qGetUserRolesId = `
-    with userId as (
-      select "UserId" from public."Auth" as A
-      where "Login"='${user}'),
-      rolesId as (
+    with rolesId as (
       select userRoles."RoleId" from public."UserRoles" as userRoles
-      inner join userId
-      on userId."UserId" = userRoles."UserId")
-      
-      
+      inner join public."Auth" as auth
+      on auth."UserId" = userRoles."UserId"
+      where auth."Login"='${user}'
+    )
+
     select * from public."Permissions" as perm
     inner join rolesId
     on perm."RoleId" = rolesId."RoleId"
-    where ${whereFields}`
+    where ${whereFields}`;
 
     const rolesId = (await this.client.query(qGetUserRolesId)).rows
     return rolesId
