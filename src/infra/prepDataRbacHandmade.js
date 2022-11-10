@@ -79,14 +79,14 @@ async function prepareData(db, poolsCount, usersMultiplier, objectsMultiplier) {
 
   const usersAuth = [];
   for (let i = 2; i <= totalUsers * preset.pools + 1; i++) {
-    usersAuth.push(`(${i}, 'qwe', 'user${i - 1}')`);
+    usersAuth.push(`(${i}, 'user${i - 1}')`);
   }
 
   const qCreateUsers = `
   insert into ${TABLE_USERS} ("Id", "Name")
   values ${users.join(",")};
 
-  insert into ${TABLE_AUTH} ("UserId", "Password", "Login")
+  insert into ${TABLE_AUTH} ("UserId", "Login")
   values ${usersAuth.join(",")};`;
 
   await db.client.query(qCreateUsers);

@@ -43,19 +43,18 @@ class DB {
     const nextId = parseInt(id, 10) + 1;
     const queryCreateUser = `
       insert into public."Users" ("Id", "Name") values (${nextId}, 'Andrey');
-      insert into public."Auth" ("UserId", "Login", "Password") values (${nextId}, 'root', 'qwe');`;
+      insert into public."Auth" ("UserId", "Login") values (${nextId}, 'root');`;
     await this.client.query(queryCreateUser);
   }
 
-  async authUser(inputLogin, inputPass) {
+  async authUser(inputLogin) {
     const query = `
-    SELECT "Password" FROM public."Auth"
+    SELECT * FROM public."Auth"
     where "Login" = '${inputLogin}'`;
 
     const result = await this.client.query(query);
-    const passInDb = result.rows[0]?.Password;
 
-    return passInDb === inputPass;
+    return result.rows[0] && true;
   }
 
   async listObjectsByType(group, type) {

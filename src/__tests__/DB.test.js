@@ -36,12 +36,12 @@ describe("DB", () => {
       where "UserId" = 1;`
     )
     const rootAuth = authRows.rows[0]
-    expect(rootAuth).toEqual({ UserId: 1, Login: 'root', Password: 'qwe' })
+    expect(rootAuth).toEqual({ UserId: 1, Login: 'root' })
   });
 
 
   test("authUser", async () => {
-    const result = await db.authUser('root', 'qwe')
+    const result = await db.authUser('root')
     expect(result).toBe(true)
   });
 
@@ -112,7 +112,7 @@ describe("DB", () => {
       where "UserId" = 1000;`
     )
     const rootAuth = authRows.rows[0]
-    expect(rootAuth).toEqual({ UserId: 1000, Login: 'user999', Password: 'qwe' })
+    expect(rootAuth).toEqual({ UserId: 1000, Login: 'user999' })
 
     const ruleRows1 = await db.client.query(`
       select * from public."casbin_rule"
@@ -189,7 +189,7 @@ describe("DB", () => {
       where "UserId" = 1000;`
     )
     const rootAuth = authRows.rows[0]
-    expect(rootAuth).toEqual({ UserId: 1000, Login: 'user999', Password: 'qwe' })
+    expect(rootAuth).toEqual({ UserId: 1000, Login: 'user999' })
 
     
     const roleRows = await db.client.query(`

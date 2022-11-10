@@ -8,14 +8,13 @@ async function auth() {
 
   console.clear();
   const login = await rl.question("login: ");
-  const pass = await rl.question("pass: ");
   rl.close();
 
-  const passed = await db.authUser(login, pass);
+  const passed = await db.authUser(login);
   
   if (!passed) {
     console.log()
-    console.log("Login or Pass is incorrect");
+    console.log("Login is incorrect");
     process.exit()
   }
   

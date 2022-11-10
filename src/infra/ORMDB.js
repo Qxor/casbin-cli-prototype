@@ -50,10 +50,6 @@ class ORMDB {
           type: DataTypes.STRING(20),
           allowNull: false,
         },
-        Password: {
-          type: DataTypes.STRING(50),
-          allowNull: false,
-        },
       },
       {
         tableName: "Auth",
