@@ -34,7 +34,8 @@ async function prepareData(db, poolsCount, usersMultiplier, objectsMultiplier) {
   delete from ${TABLE_USER_ROLES};
   delete from ${TABLE_ROLES};
   delete from ${TABLE_USERS};
-  delete from ${TABLE_CASBIN_RULES};`;
+  delete from ${TABLE_CASBIN_RULES};
+  ALTER SEQUENCE casbin_rule_id_seq RESTART WITH 1;`;
 
   await db.client.query(qCleanTables);
 
@@ -91,126 +92,125 @@ async function prepareData(db, poolsCount, usersMultiplier, objectsMultiplier) {
   //создаём политики
   const policies = [];
   for (
-    let id = 1, roleId = 1, groupId = 1, setCounter = 1;
+    let roleId = 1, groupId = 1, setCounter = 1;
     setCounter <= preset.setsPerPool * preset.pools;
     groupId += 2, setCounter++
   ) {
     const push = (v) => {
       policies.push(v);
-      id++;
     };
 
     //1st role
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type1', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type2', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type3', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type4', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type1', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type2', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type3', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type4', 'read')`);
 
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'update')`);
 
     roleId++;
 
     //2nd role
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type1', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type1', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type1', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type2', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type2', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type2', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type3', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type3', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type3', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type4', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type4', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type4', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type1', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type1', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type1', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type2', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type2', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type2', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type3', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type3', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type3', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type4', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type4', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type4', 'update')`);
 
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'read')`);
 
     roleId++;
 
     //3rd role
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type1', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type1', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type1', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type2', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type2', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type2', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type3', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type3', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type3', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type4', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type4', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type4', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type1', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type1', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type1', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type2', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type2', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type2', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type3', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type3', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type3', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type4', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type4', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type4', 'update')`);
 
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'delete')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'delete')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'delete')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'delete')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'delete')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'delete')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'delete')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'delete')`);
 
     roleId++;
 
     //4th role
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type1', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type1', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type1', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type1', 'delete')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type2', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type2', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type2', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type2', 'delete')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type3', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type3', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type3', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type3', 'delete')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type4', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type4', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type4', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId}', 'type4', 'delete')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type1', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type1', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type1', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type1', 'delete')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type2', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type2', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type2', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type2', 'delete')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type3', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type3', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type3', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type3', 'delete')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type4', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type4', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type4', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId}', 'type4', 'delete')`);
 
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'update')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'create')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'read')`);
-    push(`(${id}, 'p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type1', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type2', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type3', 'update')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'create')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'read')`);
+    push(`('p', 'role${roleId}', 'group${groupId + 1}', 'type4', 'update')`);
 
     roleId++;
   }
 
   const qCreatePolicies = `
-  insert into ${TABLE_CASBIN_RULES} ("id", "ptype", "v0", "v1", "v2", "v3")
+  insert into ${TABLE_CASBIN_RULES} ("ptype", "v0", "v1", "v2", "v3")
   values ${policies.join(",")}`;
 
   await db.client.query(qCreatePolicies);
@@ -229,48 +229,48 @@ async function prepareData(db, poolsCount, usersMultiplier, objectsMultiplier) {
     };
 
     for (let i = 1; i <= preset.userGroup["1"]; i++, id++, userId++) {
-      push(`(${id}, 'g', 'user${userId}', 'role${roleId}')`);
+      push(`('g', 'user${userId}', 'role${roleId}')`);
     }
 
     for (let i = 1; i <= preset.userGroup["2"]; i++, id++, userId++) {
-      push(`(${id}, 'g', 'user${userId}', 'role${roleId + 1}')`);
-      push(`(${id}, 'g', 'user${userId}', 'role${roleId + 4}')`);
+      push(`('g', 'user${userId}', 'role${roleId + 1}')`);
+      push(`('g', 'user${userId}', 'role${roleId + 4}')`);
     }
 
     for (let i = 1; i <= preset.userGroup["3"]; i++, id++, userId++) {
-      push(`(${id}, 'g', 'user${userId}', 'role${roleId + 2}')`);
-      push(`(${id}, 'g', 'user${userId}', 'role${roleId + 5}')`);
-      push(`(${id}, 'g', 'user${userId}', 'role${roleId + 8}')`);
+      push(`('g', 'user${userId}', 'role${roleId + 2}')`);
+      push(`('g', 'user${userId}', 'role${roleId + 5}')`);
+      push(`('g', 'user${userId}', 'role${roleId + 8}')`);
     }
 
     for (let i = 1; i <= preset.userGroup["4"]; i++, id++, userId++) {
-      push(`(${id}, 'g', 'user${userId}', 'role${roleId + 3}')`);
-      push(`(${id}, 'g', 'user${userId}', 'role${roleId + 6}')`);
-      push(`(${id}, 'g', 'user${userId}', 'role${roleId + 9}')`);
-      push(`(${id}, 'g', 'user${userId}', 'role${roleId + 12}')`);
+      push(`('g', 'user${userId}', 'role${roleId + 3}')`);
+      push(`('g', 'user${userId}', 'role${roleId + 6}')`);
+      push(`('g', 'user${userId}', 'role${roleId + 9}')`);
+      push(`('g', 'user${userId}', 'role${roleId + 12}')`);
     }
 
     for (let i = 1; i <= preset.userGroup["5"]; i++, id++, userId++) {
-      push(`(${id}, 'g', 'user${userId}', 'role${roleId + 7}')`);
-      push(`(${id}, 'g', 'user${userId}', 'role${roleId + 10}')`);
-      push(`(${id}, 'g', 'user${userId}', 'role${roleId + 13}')`);
+      push(`('g', 'user${userId}', 'role${roleId + 7}')`);
+      push(`('g', 'user${userId}', 'role${roleId + 10}')`);
+      push(`('g', 'user${userId}', 'role${roleId + 13}')`);
     }
 
     for (let i = 1; i <= preset.userGroup["6"]; i++, id++, userId++) {
-      push(`(${id}, 'g', 'user${userId}', 'role${roleId + 11}')`);
-      push(`(${id}, 'g', 'user${userId}', 'role${roleId + 14}')`);
+      push(`('g', 'user${userId}', 'role${roleId + 11}')`);
+      push(`('g', 'user${userId}', 'role${roleId + 14}')`);
     }
 
     for (let i = 1; i <= preset.userGroup["7"]; i++, id++, userId++) {
-      push(`(${id}, 'g', 'user${userId}', 'role${roleId + 15}')`);
+      push(`('g', 'user${userId}', 'role${roleId + 15}')`);
     }
   }
 
   const qCreateRoles = `
-  insert into ${TABLE_CASBIN_RULES} ("id", "ptype", "v0", "v1")
+  insert into ${TABLE_CASBIN_RULES} ("ptype", "v0", "v1")
   values ${roles.join(",")}`;
 
-  await db.client.query(qCreateRoles);
+  await db.client.query(qCreateRoles);/**/
 }
 
 

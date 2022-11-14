@@ -39,14 +39,14 @@ describe("DB", () => {
     const tables = await db.client.query(qGetObjectTablesList)
     const tableNames = tables.rows.map(table => table['table_name'])
     
-    const extectedNames = [];
+    const expectedNames = [];
     for (let g = 1; g <= groups * sets; g++) {
       for (let t = 1; t <= types; t++) {
-        extectedNames.push(`ObjectsGroup${g}Type${t}`)
+        expectedNames.push(`ObjectsGroup${g}Type${t}`)
       }
     }
 
-    expect(tableNames).toEqual(extectedNames)
+    expect(tableNames).toEqual(expectedNames)
   });
 
 
@@ -67,14 +67,14 @@ describe("DB", () => {
     const tables = await db.client.query(qGetObjectTablesList)
     const tableNames = tables.rows.map(table => table['table_name'])
     
-    const extectedNames = [];
+    const expectedNames = [];
     for (let g = 1; g <= groups * sets; g++) {
       for (let t = 1; t <= types; t++) {
-        extectedNames.push(`ObjectsGroup${g}Type${t}`)
+        expectedNames.push(`ObjectsGroup${g}Type${t}`)
       }
     }
 
-    expect(tableNames).toEqual(extectedNames)
+    expect(tableNames).toEqual(expectedNames)
 
     const userRows = await db.client.query(`
       select * from public."Users"
@@ -116,8 +116,8 @@ describe("DB", () => {
     expect(rule2).toEqual({
       id: 1558,
       ptype: 'g',
-      v0: 'user569',
-      v1: 'role5',
+      v0: 'user836',
+      v1: 'role3',
       v2: null,
       v3: null,
       v4: null,
@@ -143,13 +143,13 @@ describe("DB", () => {
     const tables = await db.client.query(qGetObjectTablesList)
     const tableNames = tables.rows.map(table => table['table_name'])
     
-    const extectedNames = [];
+    const expectedNames = [];
     for (let g = 1; g <= groups * sets; g++) {
       for (let t = 1; t <= types; t++) {
-        extectedNames.push(`ObjectsGroup${g}Type${t}`)
+        expectedNames.push(`ObjectsGroup${g}Type${t}`)
       }
     }
-    expect(tableNames).toEqual(extectedNames)
+    expect(tableNames).toEqual(expectedNames)
 
     
     const userRows = await db.client.query(`
